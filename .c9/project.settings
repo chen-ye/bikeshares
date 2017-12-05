@@ -17,7 +17,15 @@
     "run": {
         "configs": {
             "@inited": "true",
-            "json()": {}
+            "json()": {
+                "Serve": {
+                    "command": "python -m http.server",
+                    "env": {},
+                    "name": "Serve",
+                    "runner": "Shell command",
+                    "toolbar": true
+                }
+            }
         }
     }
 }
