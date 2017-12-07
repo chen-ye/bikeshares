@@ -25,8 +25,18 @@
                     "runner": "Shell command",
                     "toolbar": true
                 },
+                "Webpack Build": {
+                    "command": "yarn run build",
+                    "env": {
+                        "MapboxAccessToken": "pk.eyJ1IjoiYmxhc3Rlcm50IiwiYSI6ImlwalZmdUkifQ.TJCtxxyNmRhvH-17afmGng"
+                    },
+                    "name": "Webpack Build",
+                    "runner": "Shell command",
+                    "toolbar": true
+                },
                 "Webpack Develop": {
                     "command": "yarn run start",
+                    "default": true,
                     "env": {
                         "MapboxAccessToken": "pk.eyJ1IjoiYmxhc3Rlcm50IiwiYSI6ImlwalZmdUkifQ.TJCtxxyNmRhvH-17afmGng"
                     },

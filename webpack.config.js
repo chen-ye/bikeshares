@@ -4,12 +4,16 @@
 // avoid destructuring for older Node version support
 const resolve = require('path').resolve;
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
   entry: {
     app: resolve('./app.js')
   },
-
+  output: {
+    filename: 'bundle.js',
+    path: resolve(__dirname, 'dist')
+  },
   devtool: 'source-map',
 
   module: {
@@ -31,7 +35,10 @@ const config = {
 
   // Optional: Enables reading mapbox token from environment variable
   plugins: [
-    new webpack.EnvironmentPlugin(['MapboxAccessToken'])
+    new webpack.EnvironmentPlugin(['MapboxAccessToken']),
+    new HtmlWebpackPlugin({
+      title: 'Bikeshares'
+    })
   ]
 };
 

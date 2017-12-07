@@ -79,49 +79,112 @@ class Root extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewport: {
-        latitude: 42.358056,
-        longitude: -71.063611,
-        zoom: 14,
-        bearing: 0,
-        pitch: 0,
-        width: window.innerWidth,
-        height: window.innerHeight
-      },
       networkId: "hubway",
     };
     
-    this.hydrate(this.state.networkId);
+  }
+
+  render() {
+    return (
+      <NetworkMap networkId={this.state.networkId}></NetworkMap>
+    );
+  }
+}
+
+const defaultViewport = {
+  latitude: 42.358056,
+  longitude: -71.063611,
+  zoom: 13,
+  bearing: 0,
+  pitch: 0,
+  width: window.innerWidth,
+  height: window.innerHeight
+}
+
+class NetworkMap extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      viewport: defaultViewport,
+    };
     
+    this.hydrate(this.props.networkId);
+    
+    this.resizeViewport = this.resizeViewport.bind(this);
+    
+    window.addEventListener("resize", this.resizeViewport, false);
+  }
+  
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.networkId !== this.props.networkId) {
+      this.hydrate(nextProps.networkId);
+    }
+  }
+  
+  resizeViewport() {
+    const viewport = Object.assign({}, this.state.viewport);
+    viewport.width = window.innerWidth;
+    viewport.height = window.innerHeight;
+    this.setState({
+      viewport
+    });
   }
   
   hydrate(networkId) {
+    if(this.networkBinding) {
+      base.removeBinding(this.networkBinding)
+    }
+    if(this.routesBinding) {
+      base.removeBinding(this.routesBinding)
+    }
+    if(this.stationsBinding) {
+      base.removeBinding(this.stationsBinding)
+    }
+    
     const networkRef = db.collection("networks").doc(networkId);
     const stationsRef = networkRef.collection("stations");
     const routesRef = networkRef.collection("routes");
     
-    base.bindCollection(routesRef, {
+    this.networkBinding = base.bindDoc(networkRef, {
+      context: this,
+      state: 'network',
+      then: () => {
+        console.log(this.state);
+        const viewport = Object.assign({}, defaultViewport);
+        viewport.width = this.state.viewport.width;
+        viewport.height = this.state.viewport.height;
+        viewport.latitude = this.state.network.location.latitude;
+        viewport.longitude = this.state.network.location.longitude;
+        this.setState({
+          viewport: Object.assign({}, defaultViewport)
+        });
+      }
+    });
+    
+    this.routesBinding = base.bindCollection(routesRef, {
       context: this,
       state: 'routes',
       query: (ref) => {
         // .where("hasShape", "==", true)
-        return ref.orderBy("frequency", "desc").limit(1000);
+        return ref.orderBy("frequency", "desc").limit(5000);
       }
     });
     
-    base.bindCollection(stationsRef, {
+    this.stationsBinding = base.bindCollection(stationsRef, {
       context: this,
       state: 'stations',
-    })
+    });
   }
 
   render() {
 
     const {viewport, routes, stations} = this.state;
     
+    const filteredRoutes = Lazy(routes).filter((route) => route.shape).toArray();
+    
     const routeLayer = new PathLayer({
       id: 'routes', 
-      data: Lazy(routes).filter((route) => route.shape).toArray(), 
+      data: filteredRoutes, 
       getPath: (route) => {
         return route.shape ? polylineDecode(route.shape) : [];
       },
