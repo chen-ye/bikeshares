@@ -9,7 +9,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    margin: 2em;
+    padding: 2em;
+    box-sizing: border-box;
     pointer-events: none;
 }
 
