@@ -17,13 +17,28 @@ const config = {
   devtool: 'source-map',
 
   module: {
-    rules: [{
-      // Compile ES2015 using bable
-      test: /\.js$/,
-      loader: 'babel-loader',
-      include: [resolve('.')],
-      exclude: [/node_modules/]
-    }]
+    rules: [
+      {
+        // Compile ES2015 using bable
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: [resolve('.')],
+        exclude: [/node_modules/],
+        options: {
+          presets: [
+            'es2015',
+            'react',
+            'stage-2'
+          ].map(function configMap(name) {
+            return require.resolve(`babel-preset-${name}`);
+          })
+        }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+    ]
   },
 
   resolve: {

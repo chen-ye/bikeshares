@@ -7,8 +7,14 @@ import Lazy from 'lazy.js'
 
 import React, {Component} from 'react';
 import {render} from 'react-dom';
-import MapGL from 'react-map-gl';
+
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+
+import MapGL, {FlyToInterpolator} from './react-map-gl';
 import DeckGL, {PathLayer, ScatterplotLayer} from 'deck.gl';
+
+import styles from './app.css';
 
 const MAPBOX_TOKEN = ''; // Set your mapbox token here
 
@@ -82,11 +88,54 @@ class Root extends Component {
       networkId: "hubway",
     };
     
+    this.handleNetworkChange = this.handleNetworkChange.bind(this);
+    
+    this.hydrate();
+  }
+  
+  hydrate(networkId) {
+    if(this.networkBinding) {
+      base.removeBinding(this.networkBinding)
+    }
+    
+    const networksRef = db.collection("networks");
+    this.networkBinding = base.bindCollection(networksRef, {
+      context: this,
+      state: 'networks',
+      then: () => {
+        console.log(this.state);
+        
+      }
+    });
+  }
+  
+  handleNetworkChange(newOption) {
+    console.log(newOption);
+    this.setState({
+      networkId: newOption.value,
+    })
   }
 
   render() {
     return (
-      <NetworkMap networkId={this.state.networkId}></NetworkMap>
+      <div>
+        <NetworkMap networkId={this.state.networkId}></NetworkMap>
+        <div id="uiOverlay">
+          <Select
+            id="networkSelect"
+            name="networkSelect"
+            value={
+              // this.state.selectedNetwork.id
+              this.state.networkId
+            }
+            onChange={this.handleNetworkChange}
+            options={
+              [{label: "Hubway", value: "hubway"}, {label: "Divvy", value: "divvy"}]
+              // this.state.networks
+            }
+            />
+          </div>
+      </div>
     );
   }
 }
@@ -94,7 +143,7 @@ class Root extends Component {
 const defaultViewport = {
   latitude: 42.358056,
   longitude: -71.063611,
-  zoom: 13,
+  zoom: 12.5,
   bearing: 0,
   pitch: 0,
   width: window.innerWidth,
@@ -121,13 +170,29 @@ class NetworkMap extends Component {
     }
   }
   
-  resizeViewport() {
-    const viewport = Object.assign({}, this.state.viewport);
-    viewport.width = window.innerWidth;
-    viewport.height = window.innerHeight;
+  updateViewport(viewport) {
     this.setState({
-      viewport
+      viewport: {...this.state.viewport, ...viewport}
     });
+  }
+  
+  resizeViewport() {
+    this.updateViewport({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }
+  
+  goToViewport({longitude, latitude}) {
+    this.updateViewport({
+      longitude,
+      latitude,
+      zoome: 12.5,
+      bearing: 0,
+      pitch: 0,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionDuration: 3000
+    })
   }
   
   hydrate(networkId) {
@@ -148,17 +213,13 @@ class NetworkMap extends Component {
     this.networkBinding = base.bindDoc(networkRef, {
       context: this,
       state: 'network',
-      then: () => {
-        console.log(this.state);
-        const viewport = Object.assign({}, defaultViewport);
-        viewport.width = this.state.viewport.width;
-        viewport.height = this.state.viewport.height;
-        viewport.latitude = this.state.network.location.latitude;
-        viewport.longitude = this.state.network.location.longitude;
-        this.setState({
-          viewport: Object.assign({}, defaultViewport)
-        });
-      }
+      // then: () => {
+      //   console.log(this.state);
+      //   this.goToViewport({
+      //     latitude: this.state.network.location.latitude,
+      //     longitude: this.state.network.location.longitude,
+      //   });
+      // }
     });
     
     this.routesBinding = base.bindCollection(routesRef, {
@@ -167,6 +228,13 @@ class NetworkMap extends Component {
       query: (ref) => {
         // .where("hasShape", "==", true)
         return ref.orderBy("frequency", "desc").limit(5000);
+      },
+      then: () => {
+        console.log(this.state);
+        this.goToViewport({
+          latitude: this.state.network.location.latitude,
+          longitude: this.state.network.location.longitude,
+        });
       }
     });
     
