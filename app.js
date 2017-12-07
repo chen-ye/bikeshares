@@ -130,7 +130,7 @@ class Root extends Component {
             }
             onChange={this.handleNetworkChange}
             options={
-              [{label: "Hubway", value: "hubway"}, {label: "Divvy", value: "divvy"}, {label: "Biketown", value: "biketown"}]
+              [{label: "Hubway", value: "hubway"}, {label: "Divvy", value: "divvy"}, {label: "Biketown", value: "biketown"}, {label: "Capital Bikeshare", value: "capital-bikeshare"}]
               // this.state.networks
             }
             />
