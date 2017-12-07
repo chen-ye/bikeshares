@@ -1,0 +1,85 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+// Copyright (c) 2015 - 2017 Uber Technologies, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+var ERR_NOT_OBJECT = 'count(): argument not an object';
+var ERR_NOT_CONTAINER = 'count(): argument not a container';
+
+/**
+ * Deduces numer of elements in a JavaScript container.
+ * - Auto-deduction for ES6 containers that define a count() method
+ * - Auto-deduction for ES6 containers that define a size member
+ * - Auto-deduction for Classic Arrays via the built-in length attribute
+ * - Also handles objects, although note that this an O(N) operation
+ */
+export function count(container) {
+  if (!isObject(container)) {
+    throw new Error(ERR_NOT_OBJECT);
+  }
+
+  // Check if ES6 collection "count" function is available
+  if (typeof container.count === 'function') {
+    return container.count();
+  }
+
+  // Check if ES6 collection "size" attribute is set
+  if (Number.isFinite(container.size)) {
+    return container.size;
+  }
+
+  // Check if array length attribute is set
+  // Note: checking this last since some ES6 collections (Immutable.js)
+  // emit profuse warnings when trying to access `length` attribute
+  if (Number.isFinite(container.length)) {
+    return container.length;
+  }
+
+  // Note that getting the count of an object is O(N)
+  if (isPlainObject(container)) {
+    var counter = 0;
+    for (var key in container) {
+      // eslint-disable-line
+      counter++;
+    }
+    return counter;
+  }
+
+  throw new Error(ERR_NOT_CONTAINER);
+}
+
+/**
+ * Checks if argument is a plain object (not a class or array etc)
+ * @param {*} value - JavaScript value to be tested
+ * @return {Boolean} - true if argument is a plain JavaScript object
+ */
+function isPlainObject(value) {
+  return value !== null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value.constructor === Object;
+}
+
+/**
+ * Checks if argument is an indexable object (not a primitive value, nor null)
+ * @param {*} value - JavaScript value to be tested
+ * @return {Boolean} - true if argument is a JavaScript object
+ */
+function isObject(value) {
+  return value !== null && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object';
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9saWIvdXRpbHMvY291bnQuanMiXSwibmFtZXMiOlsiRVJSX05PVF9PQkpFQ1QiLCJFUlJfTk9UX0NPTlRBSU5FUiIsImNvdW50IiwiY29udGFpbmVyIiwiaXNPYmplY3QiLCJFcnJvciIsIk51bWJlciIsImlzRmluaXRlIiwic2l6ZSIsImxlbmd0aCIsImlzUGxhaW5PYmplY3QiLCJjb3VudGVyIiwia2V5IiwidmFsdWUiLCJjb25zdHJ1Y3RvciIsIk9iamVjdCJdLCJtYXBwaW5ncyI6Ijs7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQSxJQUFNQSxpQkFBaUIsaUNBQXZCO0FBQ0EsSUFBTUMsb0JBQW9CLG1DQUExQjs7QUFFQTs7Ozs7OztBQU9BLE9BQU8sU0FBU0MsS0FBVCxDQUFlQyxTQUFmLEVBQTBCO0FBQy9CLE1BQUksQ0FBQ0MsU0FBU0QsU0FBVCxDQUFMLEVBQTBCO0FBQ3hCLFVBQU0sSUFBSUUsS0FBSixDQUFVTCxjQUFWLENBQU47QUFDRDs7QUFFRDtBQUNBLE1BQUksT0FBT0csVUFBVUQsS0FBakIsS0FBMkIsVUFBL0IsRUFBMkM7QUFDekMsV0FBT0MsVUFBVUQsS0FBVixFQUFQO0FBQ0Q7O0FBRUQ7QUFDQSxNQUFJSSxPQUFPQyxRQUFQLENBQWdCSixVQUFVSyxJQUExQixDQUFKLEVBQXFDO0FBQ25DLFdBQU9MLFVBQVVLLElBQWpCO0FBQ0Q7O0FBRUQ7QUFDQTtBQUNBO0FBQ0EsTUFBSUYsT0FBT0MsUUFBUCxDQUFnQkosVUFBVU0sTUFBMUIsQ0FBSixFQUF1QztBQUNyQyxXQUFPTixVQUFVTSxNQUFqQjtBQUNEOztBQUVEO0FBQ0EsTUFBSUMsY0FBY1AsU0FBZCxDQUFKLEVBQThCO0FBQzVCLFFBQUlRLFVBQVUsQ0FBZDtBQUNBLFNBQUssSUFBTUMsR0FBWCxJQUFrQlQsU0FBbEIsRUFBNkI7QUFBRTtBQUM3QlE7QUFDRDtBQUNELFdBQU9BLE9BQVA7QUFDRDs7QUFFRCxRQUFNLElBQUlOLEtBQUosQ0FBVUosaUJBQVYsQ0FBTjtBQUNEOztBQUVEOzs7OztBQUtBLFNBQVNTLGFBQVQsQ0FBdUJHLEtBQXZCLEVBQThCO0FBQzVCLFNBQU9BLFVBQVUsSUFBVixJQUFrQixRQUFPQSxLQUFQLHlDQUFPQSxLQUFQLE9BQWlCLFFBQW5DLElBQStDQSxNQUFNQyxXQUFOLEtBQXNCQyxNQUE1RTtBQUNEOztBQUVEOzs7OztBQUtBLFNBQVNYLFFBQVQsQ0FBa0JTLEtBQWxCLEVBQXlCO0FBQ3ZCLFNBQU9BLFVBQVUsSUFBVixJQUFrQixRQUFPQSxLQUFQLHlDQUFPQSxLQUFQLE9BQWlCLFFBQTFDO0FBQ0QiLCJmaWxlIjoiY291bnQuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBDb3B5cmlnaHQgKGMpIDIwMTUgLSAyMDE3IFViZXIgVGVjaG5vbG9naWVzLCBJbmMuXG4vL1xuLy8gUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJlZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEgY29weVxuLy8gb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgXCJTb2Z0d2FyZVwiKSwgdG8gZGVhbFxuLy8gaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0c1xuLy8gdG8gdXNlLCBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBhbmQvb3Igc2VsbFxuLy8gY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhlIFNvZnR3YXJlIGlzXG4vLyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOlxuLy9cbi8vIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIHNoYWxsIGJlIGluY2x1ZGVkIGluXG4vLyBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS5cbi8vXG4vLyBUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgXCJBUyBJU1wiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFOWSBLSU5ELCBFWFBSRVNTIE9SXG4vLyBJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSxcbi8vIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORCBOT05JTkZSSU5HRU1FTlQuIElOIE5PIEVWRU5UIFNIQUxMIFRIRVxuLy8gQVVUSE9SUyBPUiBDT1BZUklHSFQgSE9MREVSUyBCRSBMSUFCTEUgRk9SIEFOWSBDTEFJTSwgREFNQUdFUyBPUiBPVEhFUlxuLy8gTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSxcbi8vIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IgT1RIRVIgREVBTElOR1MgSU5cbi8vIFRIRSBTT0ZUV0FSRS5cblxuY29uc3QgRVJSX05PVF9PQkpFQ1QgPSAnY291bnQoKTogYXJndW1lbnQgbm90IGFuIG9iamVjdCc7XG5jb25zdCBFUlJfTk9UX0NPTlRBSU5FUiA9ICdjb3VudCgpOiBhcmd1bWVudCBub3QgYSBjb250YWluZXInO1xuXG4vKipcbiAqIERlZHVjZXMgbnVtZXIgb2YgZWxlbWVudHMgaW4gYSBKYXZhU2NyaXB0IGNvbnRhaW5lci5cbiAqIC0gQXV0by1kZWR1Y3Rpb24gZm9yIEVTNiBjb250YWluZXJzIHRoYXQgZGVmaW5lIGEgY291bnQoKSBtZXRob2RcbiAqIC0gQXV0by1kZWR1Y3Rpb24gZm9yIEVTNiBjb250YWluZXJzIHRoYXQgZGVmaW5lIGEgc2l6ZSBtZW1iZXJcbiAqIC0gQXV0by1kZWR1Y3Rpb24gZm9yIENsYXNzaWMgQXJyYXlzIHZpYSB0aGUgYnVpbHQtaW4gbGVuZ3RoIGF0dHJpYnV0ZVxuICogLSBBbHNvIGhhbmRsZXMgb2JqZWN0cywgYWx0aG91Z2ggbm90ZSB0aGF0IHRoaXMgYW4gTyhOKSBvcGVyYXRpb25cbiAqL1xuZXhwb3J0IGZ1bmN0aW9uIGNvdW50KGNvbnRhaW5lcikge1xuICBpZiAoIWlzT2JqZWN0KGNvbnRhaW5lcikpIHtcbiAgICB0aHJvdyBuZXcgRXJyb3IoRVJSX05PVF9PQkpFQ1QpO1xuICB9XG5cbiAgLy8gQ2hlY2sgaWYgRVM2IGNvbGxlY3Rpb24gXCJjb3VudFwiIGZ1bmN0aW9uIGlzIGF2YWlsYWJsZVxuICBpZiAodHlwZW9mIGNvbnRhaW5lci5jb3VudCA9PT0gJ2Z1bmN0aW9uJykge1xuICAgIHJldHVybiBjb250YWluZXIuY291bnQoKTtcbiAgfVxuXG4gIC8vIENoZWNrIGlmIEVTNiBjb2xsZWN0aW9uIFwic2l6ZVwiIGF0dHJpYnV0ZSBpcyBzZXRcbiAgaWYgKE51bWJlci5pc0Zpbml0ZShjb250YWluZXIuc2l6ZSkpIHtcbiAgICByZXR1cm4gY29udGFpbmVyLnNpemU7XG4gIH1cblxuICAvLyBDaGVjayBpZiBhcnJheSBsZW5ndGggYXR0cmlidXRlIGlzIHNldFxuICAvLyBOb3RlOiBjaGVja2luZyB0aGlzIGxhc3Qgc2luY2Ugc29tZSBFUzYgY29sbGVjdGlvbnMgKEltbXV0YWJsZS5qcylcbiAgLy8gZW1pdCBwcm9mdXNlIHdhcm5pbmdzIHdoZW4gdHJ5aW5nIHRvIGFjY2VzcyBgbGVuZ3RoYCBhdHRyaWJ1dGVcbiAgaWYgKE51bWJlci5pc0Zpbml0ZShjb250YWluZXIubGVuZ3RoKSkge1xuICAgIHJldHVybiBjb250YWluZXIubGVuZ3RoO1xuICB9XG5cbiAgLy8gTm90ZSB0aGF0IGdldHRpbmcgdGhlIGNvdW50IG9mIGFuIG9iamVjdCBpcyBPKE4pXG4gIGlmIChpc1BsYWluT2JqZWN0KGNvbnRhaW5lcikpIHtcbiAgICBsZXQgY291bnRlciA9IDA7XG4gICAgZm9yIChjb25zdCBrZXkgaW4gY29udGFpbmVyKSB7IC8vIGVzbGludC1kaXNhYmxlLWxpbmVcbiAgICAgIGNvdW50ZXIrKztcbiAgICB9XG4gICAgcmV0dXJuIGNvdW50ZXI7XG4gIH1cblxuICB0aHJvdyBuZXcgRXJyb3IoRVJSX05PVF9DT05UQUlORVIpO1xufVxuXG4vKipcbiAqIENoZWNrcyBpZiBhcmd1bWVudCBpcyBhIHBsYWluIG9iamVjdCAobm90IGEgY2xhc3Mgb3IgYXJyYXkgZXRjKVxuICogQHBhcmFtIHsqfSB2YWx1ZSAtIEphdmFTY3JpcHQgdmFsdWUgdG8gYmUgdGVzdGVkXG4gKiBAcmV0dXJuIHtCb29sZWFufSAtIHRydWUgaWYgYXJndW1lbnQgaXMgYSBwbGFpbiBKYXZhU2NyaXB0IG9iamVjdFxuICovXG5mdW5jdGlvbiBpc1BsYWluT2JqZWN0KHZhbHVlKSB7XG4gIHJldHVybiB2YWx1ZSAhPT0gbnVsbCAmJiB0eXBlb2YgdmFsdWUgPT09ICdvYmplY3QnICYmIHZhbHVlLmNvbnN0cnVjdG9yID09PSBPYmplY3Q7XG59XG5cbi8qKlxuICogQ2hlY2tzIGlmIGFyZ3VtZW50IGlzIGFuIGluZGV4YWJsZSBvYmplY3QgKG5vdCBhIHByaW1pdGl2ZSB2YWx1ZSwgbm9yIG51bGwpXG4gKiBAcGFyYW0geyp9IHZhbHVlIC0gSmF2YVNjcmlwdCB2YWx1ZSB0byBiZSB0ZXN0ZWRcbiAqIEByZXR1cm4ge0Jvb2xlYW59IC0gdHJ1ZSBpZiBhcmd1bWVudCBpcyBhIEphdmFTY3JpcHQgb2JqZWN0XG4gKi9cbmZ1bmN0aW9uIGlzT2JqZWN0KHZhbHVlKSB7XG4gIHJldHVybiB2YWx1ZSAhPT0gbnVsbCAmJiB0eXBlb2YgdmFsdWUgPT09ICdvYmplY3QnO1xufVxuXG4iXX0=

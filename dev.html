@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Bikeshares</title>
+  <link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css">
+  <!--<link rel="stylesheet" type="text/css" href="https://mapzen.com/js/mapzen.standalone.css">-->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+  <style type="text/css">
+    #map {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+    }
+    html,body{margin: 0; padding: 0;}
+    
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      margin: 1em;
+    }
+    
+    .station-icon {
+      height: 4px;
+      width: 4px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background-color: #37DB67;
+    }
+    
+    /*.hubway-904b7113d7e610919a5336c1167674e2.station-icon {*/
+    /*  background-color: green; */
+    /*}*/
+  </style>
+</head>
+
+<body>
+  <div id="overlay">
+    <div class="ui card">
+      <div class="content">
+        <h1 class="header">
+          Initialize Network
+        </h1>
+        <button id="initialize-button" class="ui button">
+          Start
+        </button>
+      </div>
+    </div>
+    <div class="ui card">
+      <div class="content">
+        <h1 class="header">
+          Trip Pathfind
+        </h1>
+        <button id="pathfind-button" class="ui button">
+          Start
+        </button>
+      </div>
+      <div id="progress-text" class="extra content">
+        Ready
+      </div>
+      <div id="progress-bar" data-percent="0" class="ui bottom attached progress">
+        <div class="bar">
+        </div>
+      </div>
+    </div>
+    <div class="ui card">
+      <div class="content">
+        <h1 class="header">
+          Trip Frequency
+        </h1>
+        <input type="file" id="frequency-file" multiple>
+      </div>
+      <div id="frequency-progress-text" class="extra content">
+        Ready
+      </div>
+      <div id="frequency-progress-bar" data-percent="0" class="ui bottom attached progress">
+        <div class="bar">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+  
+  <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+  <script src="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js"></script>
+  <!--<script src="https://mapzen.com/js/mapzen.standalone.min.js"></script>-->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.6.0/async.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <script src="https://fastcdn.org/Papa-Parse/4.1.2/papaparse.min.js"></script>
+  <script src="dev.js"></script>
+</body>
+
+</html>

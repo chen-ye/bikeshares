@@ -1,0 +1,62 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Manager = undefined;
+
+var _globals = require('./globals');
+
+var _hammerOverrides = require('./hammer-overrides');
+
+// Copyright (c) 2017 Uber Technologies, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+var hammerjs = void 0;
+if (_globals.isBrowser) {
+  hammerjs = require('hammerjs');
+}
+
+// Hammer.Manager mock for use in environments without `document` / `window`.
+function HammerManagerMock(m) {
+  var instance = {};
+  var chainedNoop = function chainedNoop() {
+    return instance;
+  };
+  instance.get = function () {
+    return null;
+  };
+  instance.set = chainedNoop;
+  instance.on = chainedNoop;
+  instance.off = chainedNoop;
+  instance.destroy = chainedNoop;
+  instance.emit = chainedNoop;
+  return instance;
+}
+
+if (hammerjs) {
+  (0, _hammerOverrides.enhancePointerEventInput)(hammerjs.PointerEventInput);
+  (0, _hammerOverrides.enhanceMouseInput)(hammerjs.MouseInput);
+}
+
+var Manager = exports.Manager = hammerjs ? hammerjs.Manager : HammerManagerMock;
+
+exports.default = hammerjs;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy91dGlscy9oYW1tZXIuanMiXSwibmFtZXMiOlsiaGFtbWVyanMiLCJyZXF1aXJlIiwiSGFtbWVyTWFuYWdlck1vY2siLCJtIiwiaW5zdGFuY2UiLCJjaGFpbmVkTm9vcCIsImdldCIsInNldCIsIm9uIiwib2ZmIiwiZGVzdHJveSIsImVtaXQiLCJQb2ludGVyRXZlbnRJbnB1dCIsIk1vdXNlSW5wdXQiLCJNYW5hZ2VyIl0sIm1hcHBpbmdzIjoiOzs7Ozs7O0FBb0JBOztBQUNBOztBQXJCQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFLQSxJQUFJQSxpQkFBSjtBQUNBLHdCQUFlO0FBQ2JBLGFBQVdDLFFBQVEsVUFBUixDQUFYO0FBQ0Q7O0FBRUQ7QUFDQSxTQUFTQyxpQkFBVCxDQUEyQkMsQ0FBM0IsRUFBOEI7QUFDNUIsTUFBTUMsV0FBVyxFQUFqQjtBQUNBLE1BQU1DLGNBQWMsU0FBZEEsV0FBYztBQUFBLFdBQU1ELFFBQU47QUFBQSxHQUFwQjtBQUNBQSxXQUFTRSxHQUFULEdBQWU7QUFBQSxXQUFNLElBQU47QUFBQSxHQUFmO0FBQ0FGLFdBQVNHLEdBQVQsR0FBZUYsV0FBZjtBQUNBRCxXQUFTSSxFQUFULEdBQWNILFdBQWQ7QUFDQUQsV0FBU0ssR0FBVCxHQUFlSixXQUFmO0FBQ0FELFdBQVNNLE9BQVQsR0FBbUJMLFdBQW5CO0FBQ0FELFdBQVNPLElBQVQsR0FBZ0JOLFdBQWhCO0FBQ0EsU0FBT0QsUUFBUDtBQUNEOztBQUVELElBQUlKLFFBQUosRUFBYztBQUNaLGlEQUF5QkEsU0FBU1ksaUJBQWxDO0FBQ0EsMENBQWtCWixTQUFTYSxVQUEzQjtBQUNEOztBQUVNLElBQU1DLDRCQUFVZCxXQUFXQSxTQUFTYyxPQUFwQixHQUE4QlosaUJBQTlDOztrQkFFUUYsUSIsImZpbGUiOiJoYW1tZXIuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBDb3B5cmlnaHQgKGMpIDIwMTcgVWJlciBUZWNobm9sb2dpZXMsIEluYy5cbi8vXG4vLyBQZXJtaXNzaW9uIGlzIGhlcmVieSBncmFudGVkLCBmcmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbiBvYnRhaW5pbmcgYSBjb3B5XG4vLyBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZSBcIlNvZnR3YXJlXCIpLCB0byBkZWFsXG4vLyBpbiB0aGUgU29mdHdhcmUgd2l0aG91dCByZXN0cmljdGlvbiwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB0aGUgcmlnaHRzXG4vLyB0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsIGFuZC9vciBzZWxsXG4vLyBjb3BpZXMgb2YgdGhlIFNvZnR3YXJlLCBhbmQgdG8gcGVybWl0IHBlcnNvbnMgdG8gd2hvbSB0aGUgU29mdHdhcmUgaXNcbi8vIGZ1cm5pc2hlZCB0byBkbyBzbywgc3ViamVjdCB0byB0aGUgZm9sbG93aW5nIGNvbmRpdGlvbnM6XG4vL1xuLy8gVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUgaW5jbHVkZWQgaW5cbi8vIGFsbCBjb3BpZXMgb3Igc3Vic3RhbnRpYWwgcG9ydGlvbnMgb2YgdGhlIFNvZnR3YXJlLlxuLy9cbi8vIFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCBcIkFTIElTXCIsIFdJVEhPVVQgV0FSUkFOVFkgT0YgQU5ZIEtJTkQsIEVYUFJFU1MgT1Jcbi8vIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJTUlURUQgVE8gVEhFIFdBUlJBTlRJRVMgT0YgTUVSQ0hBTlRBQklMSVRZLFxuLy8gRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFXG4vLyBBVVRIT1JTIE9SIENPUFlSSUdIVCBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENMQUlNLCBEQU1BR0VTIE9SIE9USEVSXG4vLyBMSUFCSUxJVFksIFdIRVRIRVIgSU4gQU4gQUNUSU9OIE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORyBGUk9NLFxuLy8gT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUyBJTlxuLy8gVEhFIFNPRlRXQVJFLlxuXG5pbXBvcnQge2lzQnJvd3Nlcn0gZnJvbSAnLi9nbG9iYWxzJztcbmltcG9ydCB7ZW5oYW5jZVBvaW50ZXJFdmVudElucHV0LCBlbmhhbmNlTW91c2VJbnB1dH0gZnJvbSAnLi9oYW1tZXItb3ZlcnJpZGVzJztcblxubGV0IGhhbW1lcmpzO1xuaWYgKGlzQnJvd3Nlcikge1xuICBoYW1tZXJqcyA9IHJlcXVpcmUoJ2hhbW1lcmpzJyk7XG59XG5cbi8vIEhhbW1lci5NYW5hZ2VyIG1vY2sgZm9yIHVzZSBpbiBlbnZpcm9ubWVudHMgd2l0aG91dCBgZG9jdW1lbnRgIC8gYHdpbmRvd2AuXG5mdW5jdGlvbiBIYW1tZXJNYW5hZ2VyTW9jayhtKSB7XG4gIGNvbnN0IGluc3RhbmNlID0ge307XG4gIGNvbnN0IGNoYWluZWROb29wID0gKCkgPT4gaW5zdGFuY2U7XG4gIGluc3RhbmNlLmdldCA9ICgpID0+IG51bGw7XG4gIGluc3RhbmNlLnNldCA9IGNoYWluZWROb29wO1xuICBpbnN0YW5jZS5vbiA9IGNoYWluZWROb29wO1xuICBpbnN0YW5jZS5vZmYgPSBjaGFpbmVkTm9vcDtcbiAgaW5zdGFuY2UuZGVzdHJveSA9IGNoYWluZWROb29wO1xuICBpbnN0YW5jZS5lbWl0ID0gY2hhaW5lZE5vb3A7XG4gIHJldHVybiBpbnN0YW5jZTtcbn1cblxuaWYgKGhhbW1lcmpzKSB7XG4gIGVuaGFuY2VQb2ludGVyRXZlbnRJbnB1dChoYW1tZXJqcy5Qb2ludGVyRXZlbnRJbnB1dCk7XG4gIGVuaGFuY2VNb3VzZUlucHV0KGhhbW1lcmpzLk1vdXNlSW5wdXQpO1xufVxuXG5leHBvcnQgY29uc3QgTWFuYWdlciA9IGhhbW1lcmpzID8gaGFtbWVyanMuTWFuYWdlciA6IEhhbW1lck1hbmFnZXJNb2NrO1xuXG5leHBvcnQgZGVmYXVsdCBoYW1tZXJqcztcbiJdfQ==

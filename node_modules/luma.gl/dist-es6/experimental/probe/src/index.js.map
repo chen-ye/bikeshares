@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/experimental/probe/src/index.js"],"names":["Probe"],"mappings":"AAAA,OAAOA,KAAP,MAAkB,SAAlB;AACA,SAAQA,KAAR;AACA,cAAc,eAAd;AACA,eAAe,IAAIA,KAAJ,EAAf","file":"index.js","sourcesContent":["import Probe from './probe';\nexport {Probe as Probe};\nexport * from './error-utils';\nexport default new Probe();\n"]}

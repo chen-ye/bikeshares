@@ -1,0 +1,285 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/* eslint-disable max-statements */
+import Probe from '../src/probe';
+import test from 'tape';
+
+function getInstance() {
+  return new Probe({
+    isEnabled: true,
+    isPrintEnabled: false,
+    ignoreEnvironment: true
+  });
+}
+
+test('Probe#probe', function (assert) {
+  var probe = getInstance();
+
+  probe.probe('test');
+
+  var log = probe.getLog();
+  var row = log[0];
+
+  assert.equals(log.length, 1, 'Expected row logged');
+  assert.equal(row.name, 'test', 'Name logged');
+  assert.equal(_typeof(row.total), 'number', 'Start is set');
+  assert.equal(_typeof(row.delta), 'number', 'Delta is set');
+
+  assert.end();
+});
+
+test('Probe#probe - level methods', function (assert) {
+  var probe = getInstance().setLevel(3);
+
+  probe.probe('test0');
+  probe.probe1('test1');
+  probe.probe2('test2');
+  probe.probe3('test3');
+
+  var log = probe.getLog();
+
+  assert.equals(log.length, 4, 'Expected rows logged');
+  assert.deepEqual(log.map(function (row) {
+    return row.level;
+  }), [1, 1, 2, 3], 'Levels match expected');
+  assert.deepEqual(log.map(function (row) {
+    return row.name;
+  }), ['test0', 'test1', 'test2', 'test3'], 'Names match expected');
+
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = log[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var row = _step.value;
+
+      assert.equal(_typeof(row.total), 'number', 'Start is set');
+      assert.equal(_typeof(row.delta), 'number', 'Delta is set');
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  assert.end();
+});
+
+test('Probe#probe - level methods, lower level set', function (assert) {
+  var probe = getInstance().setLevel(1);
+
+  probe.probe('test0');
+  probe.probe1('test1');
+  probe.probe2('test2');
+  probe.probe3('test3');
+
+  var log = probe.getLog();
+
+  assert.equals(log.length, 2, 'Expected rows logged');
+  assert.deepEqual(log.map(function (row) {
+    return row.level;
+  }), [1, 1], 'Levels match expected');
+
+  assert.end();
+});
+
+test('Probe#probe - disabled', function (assert) {
+  var probe = getInstance().disable();
+
+  probe.probe('test0');
+  probe.probe1('test1');
+  probe.probe2('test2');
+  probe.probe3('test3');
+
+  var log = probe.getLog();
+
+  assert.equals(log.length, 0, 'No rows logged');
+
+  assert.end();
+});
+
+test('Probe#sample - level methods', function (assert) {
+  var probe = getInstance().setLevel(3);
+
+  probe.sample('test0');
+  probe.sample1('test1');
+  probe.sample2('test2');
+  probe.sample3('test3');
+
+  var log = probe.getLog();
+
+  assert.equals(log.length, 4, 'Expected rows logged');
+  assert.deepEqual(log.map(function (row) {
+    return row.level;
+  }), [1, 1, 2, 3], 'Levels match expected');
+  assert.deepEqual(log.map(function (row) {
+    return row.name;
+  }), ['test0', 'test1', 'test2', 'test3'], 'Names match expected');
+
+  var _iteratorNormalCompletion2 = true;
+  var _didIteratorError2 = false;
+  var _iteratorError2 = undefined;
+
+  try {
+    for (var _iterator2 = log[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+      var row = _step2.value;
+
+      assert.equal(_typeof(row.total), 'number', 'Start is set');
+      assert.equal(_typeof(row.delta), 'number', 'Delta is set');
+      assert.equal(_typeof(row.averageTime), 'number', 'Avg time is set');
+    }
+  } catch (err) {
+    _didIteratorError2 = true;
+    _iteratorError2 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+        _iterator2.return();
+      }
+    } finally {
+      if (_didIteratorError2) {
+        throw _iteratorError2;
+      }
+    }
+  }
+
+  assert.end();
+});
+
+test('Probe#fps - level methods', function (assert) {
+  var probe = getInstance().setLevel(3);
+  var count = 3;
+
+  for (var i = 0; i < count; i++) {
+    probe.fps('test0', { count: count });
+    probe.fps1('test1', { count: count });
+    probe.fps2('test2', { count: count });
+    probe.fps3('test3', { count: count });
+  }
+
+  var log = probe.getLog();
+
+  assert.equals(log.length, 4, 'Expected rows logged');
+  assert.deepEqual(log.map(function (row) {
+    return row.level;
+  }), [1, 1, 2, 3], 'Levels match expected');
+  assert.deepEqual(log.map(function (row) {
+    return row.name;
+  }), ['test0', 'test1', 'test2', 'test3'], 'Names match expected');
+
+  var _iteratorNormalCompletion3 = true;
+  var _didIteratorError3 = false;
+  var _iteratorError3 = undefined;
+
+  try {
+    for (var _iterator3 = log[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+      var row = _step3.value;
+
+      assert.equal(_typeof(row.total), 'number', 'Start is set');
+      assert.equal(_typeof(row.delta), 'number', 'Delta is set');
+      assert.equal(_typeof(row.fps), 'number', 'FPS is set');
+    }
+  } catch (err) {
+    _didIteratorError3 = true;
+    _iteratorError3 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+        _iterator3.return();
+      }
+    } finally {
+      if (_didIteratorError3) {
+        throw _iteratorError3;
+      }
+    }
+  }
+
+  assert.end();
+});
+
+test('Probe#fps - log once per count', function (assert) {
+  var probe = getInstance().setLevel(3);
+  var count = 3;
+  var cycles = 4;
+
+  for (var i = 0; i < count * cycles; i++) {
+    probe.fps('test', { count: count });
+  }
+
+  var log = probe.getLog();
+
+  assert.equals(log.length, cycles, 'Expected rows logged');
+
+  var _iteratorNormalCompletion4 = true;
+  var _didIteratorError4 = false;
+  var _iteratorError4 = undefined;
+
+  try {
+    for (var _iterator4 = log[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+      var row = _step4.value;
+
+      assert.equal(_typeof(row.total), 'number', 'Start is set');
+      assert.equal(_typeof(row.delta), 'number', 'Delta is set');
+      assert.equal(_typeof(row.fps), 'number', 'FPS is set');
+    }
+  } catch (err) {
+    _didIteratorError4 = true;
+    _iteratorError4 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+        _iterator4.return();
+      }
+    } finally {
+      if (_didIteratorError4) {
+        throw _iteratorError4;
+      }
+    }
+  }
+
+  assert.end();
+});
+
+test('Probe#disable / Probe#enable', function (assert) {
+  var probe = getInstance();
+
+  assert.strictEqual(probe.isEnabled(), true, 'isEnabled matches expected');
+
+  probe.disable();
+  probe.probe('test_disabled');
+
+  assert.strictEqual(probe.isEnabled(), false, 'isEnabled matches expected');
+  assert.strictEqual(probe.getLog().length, 0, 'No row logged');
+
+  probe.enable();
+  probe.probe('test_enabled');
+
+  assert.strictEqual(probe.isEnabled(), true, 'isEnabled matches expected');
+  assert.strictEqual(probe.getLog().length, 1, 'Row logged');
+  assert.strictEqual(probe.getLog()[0].name, 'test_enabled', 'Row name matches expected');
+
+  assert.end();
+});
+
+test('Probe#configure', function (assert) {
+  var probe = getInstance().configure({
+    level: 2,
+    foo: 'bar'
+  });
+
+  assert.strictEqual(probe.getOption('level'), 2, 'Set known option');
+  assert.strictEqual(probe.getOption('foo'), 'bar', 'Set unknown option');
+
+  assert.end();
+});
+//# sourceMappingURL=probe-spec.js.map

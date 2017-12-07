@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/packages/events/index.js"],"names":["addEvents"],"mappings":";;;;;;;;;;;sBAAQA,S","file":"index.js","sourcesContent":["export {addEvents} from './add-events';\n"]}

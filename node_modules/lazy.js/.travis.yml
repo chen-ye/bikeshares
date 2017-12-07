@@ -1,0 +1,14 @@
+sudo: false
+
+language: node_js
+
+node_js:
+  - "0.10"
+  - "0.12"
+  - 4
+  - 6
+  - 7
+
+install:
+  - npm i -g npm@latest
+  - npm install
